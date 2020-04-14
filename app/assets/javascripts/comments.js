@@ -42,10 +42,10 @@
     toggle_arrow: function(id) {
       var arrow;
       arrow = "span#" + id + "_arrow";
-      if ($(arrow).hasClass("icon-arrow-right")) {
-        $(arrow).removeClass("icon-arrow-right").addClass("icon-arrow-down");
+      if ($(arrow).hasClass("far fa-minus-square")) {
+        $(arrow).removeClass("far fa-minus-square").addClass("far fa-plus-square");
       } else {
-        $(arrow).removeClass("icon-arrow-down").addClass("icon-arrow-right");
+        $(arrow).removeClass("far fa-plus-square").addClass("far fa-minus-square");
       }
     },
     initialize: function() {
