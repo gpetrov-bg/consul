@@ -80,6 +80,15 @@ describe SDG::Relatable do
     end
   end
 
+  describe "#sdg_related_list" do
+    it "orders related list by code" do
+      relatable.sdg_goals = [SDG::Goal[1], SDG::Goal[3], SDG::Goal[2]]
+      relatable.sdg_targets = [SDG::Target[2.2], SDG::Target[1.2], SDG::Target[2.1]]
+
+      expect(relatable.sdg_related_list).to eq "1, 1.2, 2, 2.1, 2.2, 3"
+    end
+  end
+
   describe "#related_sdgs" do
     it "returns all related goals and targets" do
       relatable.sdg_goals = [goal, another_goal]
@@ -91,29 +100,57 @@ describe SDG::Relatable do
     end
   end
 
-  describe "#sdg_target_list=" do
-    it "assigns a single target" do
-      relatable.sdg_target_list = "1.1"
+  describe "#sdg_related_list=" do
+    it "assigns a single goal" do
+      relatable.sdg_related_list = "1"
 
-      expect(relatable.reload.sdg_targets).to match_array [SDG::Target["1.1"]]
+      expect(relatable.reload.sdg_goals).to match_array [SDG::Goal[1]]
+    end
+
+    it "assigns a single target" do
+      relatable.sdg_related_list = "1.1"
+
+      expect(relatable.reload.sdg_goals).to match_array [SDG::Goal[1]]
+      expect(relatable.reload.sdg_targets).to match_array [SDG::Target[1.1]]
     end
 
     it "assigns multiple targets" do
-      relatable.sdg_target_list = "1.1,2.3"
+      relatable.sdg_related_list = "1.1,2.3"
 
-      expect(relatable.reload.sdg_targets).to match_array [SDG::Target["1.1"], SDG::Target["2.3"]]
+      expect(relatable.reload.sdg_goals).to match_array [SDG::Goal[1], SDG::Goal[2]]
+      expect(relatable.reload.sdg_targets).to match_array [SDG::Target[1.1], SDG::Target[2.3]]
+    end
+
+    it "assigns multiple goals" do
+      relatable.sdg_related_list = "3,2,1"
+
+      expect(relatable.reload.sdg_goals).to match_array [SDG::Goal[1], SDG::Goal[2], SDG::Goal[3]]
     end
 
     it "ignores trailing spaces and spaces between commas" do
-      relatable.sdg_target_list = " 1.1,  2.3 "
-
-      expect(relatable.reload.sdg_targets).to match_array [SDG::Target["1.1"], SDG::Target["2.3"]]
-    end
-
-    it "assigns goals" do
-      relatable.sdg_target_list = "1.1,1.2,2.3"
+      relatable.sdg_related_list = " 1.1,  2.3 "
 
       expect(relatable.reload.sdg_goals).to match_array [SDG::Goal[1], SDG::Goal[2]]
+      expect(relatable.reload.sdg_targets).to match_array [SDG::Target[1.1], SDG::Target[2.3]]
+    end
+
+    it "assigns goals and targets" do
+      relatable.sdg_related_list = "1.1,3,4,4.1"
+
+      expect(relatable.reload.sdg_goals).to match_array [SDG::Goal[1], SDG::Goal[3], SDG::Goal[4]]
+      expect(relatable.reload.sdg_targets).to match_array [SDG::Target[1.1], SDG::Target[4.1]]
+    end
+  end
+
+  describe "#sdg_review" do
+    it "returns nil when relatable is not reviewed" do
+      expect(relatable.sdg_review).to be_blank
+    end
+
+    it "returns the review when relatable is reviewed" do
+      review = create(:sdg_review, relatable: relatable)
+
+      expect(relatable.sdg_review).to eq(review)
     end
   end
 
@@ -156,6 +193,25 @@ describe SDG::Relatable do
       create(:proposal, sdg_targets: [another_target])
 
       expect(relatable.class.by_target(target.code)).to be_empty
+    end
+  end
+
+  describe ".pending_sdg_review" do
+    let!(:relatable) { create(:proposal) }
+
+    it "returns records not reviewed yet" do
+      create(:sdg_review, relatable: create(:proposal))
+
+      expect(relatable.class.pending_sdg_review).to match_array [relatable]
+    end
+  end
+
+  describe ".sdg_reviewed" do
+    let!(:relatable) { create(:proposal) }
+    let!(:reviewed_relatable) { create(:sdg_review, relatable: create(:proposal)).relatable }
+
+    it "returns records already reviewed" do
+      expect(relatable.class.sdg_reviewed).to match_array [reviewed_relatable]
     end
   end
 end

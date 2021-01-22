@@ -2,7 +2,7 @@ es:
   attributes:
     geozone_id: "Ámbito de actuación"
     results_enabled: "Mostrar resultados"
-    sdg_target_list: "Metas"
+    sdg_related_list: "Objetivos de Desarrollo Sostenible y Metas"
     stats_enabled: "Mostrar estadísticas"
     advanced_stats_enabled: "Mostrar estadísticas avanzadas"
     name: Nombre
@@ -331,6 +331,10 @@ es:
       sdg/local_target/translation:
         title: "Título"
         description: "Descripción"
+      sdg/phase/kind:
+        sensitization: "Sensibilización"
+        planning: "Planificación"
+        monitoring: "Seguimiento"
       sdg/target:
         code: "Código"
         title: "Título"
