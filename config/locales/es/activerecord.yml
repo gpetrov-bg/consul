@@ -2,12 +2,12 @@ es:
   attributes:
     geozone_id: "Ámbito de actuación"
     results_enabled: "Mostrar resultados"
-    sdg_related_list: "Objetivos de Desarrollo Sostenible y Metas"
     stats_enabled: "Mostrar estadísticas"
     advanced_stats_enabled: "Mostrar estadísticas avanzadas"
     name: Nombre
     email: Email
     description: Descripción
+    related_sdg_list: Objetivos y Metas
   activerecord:
     models:
       activity:
@@ -230,6 +230,7 @@ es:
         ends_at: "Fecha de fin"
         starts_at: "Fecha de inicio"
       budget/phase/translation:
+        name: "Nombre"
         description: "Descripción"
         summary: "Resumen"
       comment:

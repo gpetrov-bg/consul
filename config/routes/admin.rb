@@ -53,6 +53,7 @@ namespace :admin do
 
   resources :budgets do
     member do
+      patch :publish
       put :calculate_winners
     end
 
@@ -204,6 +205,7 @@ namespace :admin do
     get :proposal_notifications, on: :collection
     get :direct_messages, on: :collection
     get :polls, on: :collection
+    get :sdg, on: :collection
   end
 
   namespace :legislation do

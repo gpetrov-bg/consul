@@ -2,12 +2,12 @@ en:
   attributes:
     geozone_id: "Scope of operation"
     results_enabled: "Show results"
-    sdg_related_list: "Sustainable Development Goals and Targets"
     stats_enabled: "Show stats"
     advanced_stats_enabled: "Show advanced stats"
     name: Name
     email: Email
     description: Description
+    related_sdg_list: Goals and Targets
   activerecord:
     models:
       activity:
@@ -230,6 +230,7 @@ en:
         ends_at: "End date"
         starts_at: "Start date"
       budget/phase/translation:
+        name: "Name"
         description: "Description"
         summary: "Summary"
       comment:

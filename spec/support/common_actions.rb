@@ -43,4 +43,16 @@ module CommonActions
     allow_any_instance_of(Officing::BaseController).
     to receive(:current_booth).and_return(booth)
   end
+
+  def click_sdg_goal(code)
+    within(".sdg-related-list-selector .goals") do
+      find("[data-code='#{code}'] + label").click
+    end
+  end
+
+  def remove_sdg_goal_or_target_tag(code)
+    within "span[data-val='#{code}']" do
+      click_button "Remove"
+    end
+  end
 end

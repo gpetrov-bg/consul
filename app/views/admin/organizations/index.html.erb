@@ -8,7 +8,7 @@
 <%= render "shared/filter_subnav", i18n_namespace: "admin.organizations.index" %>
 
 <% if @organizations.any? %>
-  <h3 class="margin"><%= page_entries_info @organizations %></h3>
+  <h3><%= page_entries_info @organizations %></h3>
 
   <table>
     <% hidden = 0 %>
@@ -22,7 +22,7 @@
     </thead>
     <tbody>
     <% @organizations.each do |organization| %>
-      <% hidden += 1 and next if organization.user.nil? || organization.user.hidden? %>
+      <% hidden += 1 and next if organization.user.nil? %>
       <tr id="<%= dom_id(organization) %>">
       <td><%= organization.name %></td>
       <td><%= organization.email %></td>

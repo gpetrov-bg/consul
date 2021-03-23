@@ -1,8 +1,16 @@
 <% provide(:title) { title } %>
 
-<%= render Shared::BannerComponent.new("sdg") %>
+<main class="sdg-goals-index">
+  <% if header.present? %>
+    <%= render "shared/header", header: header %>
+  <% else %>
+    <header class="section-header">
+      <h1><%= title %></h1>
+    </header>
+  <% end %>
 
-<div class="sdg-goals-index">
+  <%= render Shared::BannerComponent.new("sdg") %>
+
   <%= link_list(*goal_links, class: "sdg-goal-list") %>
 
   <% phases.each do |phase| %>
@@ -14,4 +22,4 @@
       <%= render "shared/cards", cards: phase.cards %>
     </section>
   <% end %>
-</div>
+</main>

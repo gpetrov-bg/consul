@@ -1,4 +1,10 @@
 .sdg-related-list-selector {
+  @include grid-column-gutter;
+  clear: both;
+
+  > legend {
+    margin-bottom: 0;
+  }
 
   .amsify-suggestags-area .amsify-select-tag {
     color: $white;
@@ -10,26 +16,38 @@
     }
   }
 
-  label + ul {
-    list-style: none;
-    margin-bottom: 0;
-    margin-left: 0;
+  .goals {
 
-    li {
-      display: inline-block;
+    + label {
+      @include element-invisible;
+    }
 
-      &[aria-checked=true] img {
-        opacity: 0.15;
-      }
+    legend {
+      font-weight: normal;
+      font-style: italic;
+    }
+  }
 
-      &:focus {
+  .goal-list {
+    @extend %sdg-goal-list-expanded;
+
+    input {
+      @include element-invisible;
+
+      &:focus + label {
         outline: $outline-focus;
       }
 
-      &:hover {
-        cursor: pointer;
+      &:checked + label img {
+        opacity: 0.15;
       }
     }
+  }
+
+  .help-text {
+    font-weight: normal;
+    font-style: italic;
+    font-size: $base-font-size;
   }
 
   .input-section {

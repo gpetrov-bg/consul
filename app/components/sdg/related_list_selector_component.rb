@@ -5,17 +5,14 @@ class SDG::RelatedListSelectorComponent < ApplicationComponent
     @f = form
   end
 
-  def checked?(code)
-    f.object.sdg_goals.find_by(code: code).present?
-  end
-
   def sdg_related_suggestions
     goals_and_targets.map { |goal_or_target| suggestion_tag_for(goal_or_target) }
   end
 
   def goals_and_targets
     goals.map do |goal|
-      [goal, *goal.targets.sort]
+      global_and_local_targets = goal.targets + goal.local_targets
+      [goal, global_and_local_targets.sort]
     end.flatten
   end
 
@@ -28,10 +25,21 @@ class SDG::RelatedListSelectorComponent < ApplicationComponent
     }
   end
 
+  def render?
+    SDG::ProcessEnabled.new(f.object).enabled?
+  end
+
   private
 
     def goals
       SDG::Goal.order(:code)
+    end
+
+    def goal_field(checkbox_form)
+      goal = checkbox_form.object
+
+      checkbox_form.check_box(data: { code: goal.code }) +
+        checkbox_form.label { render(SDG::Goals::IconComponent.new(goal)) }
     end
 
     def text_for(goal_or_target)
@@ -40,5 +48,9 @@ class SDG::RelatedListSelectorComponent < ApplicationComponent
       else
         goal_or_target.code
       end
+    end
+
+    def relatable_name
+      f.object.model_name.human.downcase
     end
 end

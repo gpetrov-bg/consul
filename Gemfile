@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails", "5.2.4.4"
+gem "rails", "5.2.4.5"
 
 gem "acts-as-taggable-on", "~> 6.5.0"
 gem "acts_as_votable", "~> 0.12.1"
@@ -43,17 +43,17 @@ gem "omniauth-twitter", "~> 1.4.0"
 gem "paperclip", "~> 6.1.0"
 gem "paranoia", "~> 2.4.2"
 gem "pg", "~> 1.0.0"
-gem "pg_search", "~> 2.3.4"
+gem "pg_search", "~> 2.3.5"
 gem "puma", "~> 4.3.6"
 gem "recipient_interceptor", "~> 0.2.0"
-gem "redcarpet", "~> 3.5.0"
+gem "redcarpet", "~> 3.5.1"
 gem "responders", "~> 3.0.1"
 gem "rinku", "~> 2.0.6", require: "rails_rinku"
 gem "rollbar", "~> 3.0.1"
 gem "sassc-rails", "~> 2.1.2"
 gem "savon", "~> 2.12.1"
 gem "sitemap_generator", "~> 6.1.2"
-gem "social-share-button", "~> 1.1"
+gem "social-share-button", "~> 1.2.3"
 gem "sprockets", "~> 3.7.2"
 gem "translator-text", "~> 0.1.0"
 gem "turbolinks", "~> 5.2.1"
@@ -99,9 +99,14 @@ group :development do
   gem "capistrano-rails", "~> 1.6.1", require: false
   gem "capistrano3-delayed-job", "~> 1.7.6"
   gem "capistrano3-puma", "~> 4.0.0"
-  gem "erb_lint", require: false
+  gem "erb_lint", "~> 0.0.35", require: false
   gem "github_changelog_generator", "~> 1.15.2"
   gem "mdl", "~> 0.11.0", require: false
+  gem "pronto", "~> 0.11.0", require: false
+  gem "pronto-erb_lint", "~> 0.1.5", require: false
+  gem "pronto-eslint", "~> 0.11.0", require: false
+  gem "pronto-rubocop", "~> 0.11.0", require: false
+  gem "pronto-scss", "~> 0.11.0", require: false
   gem "rubocop", "~> 0.91.0", require: false
   gem "rubocop-performance", "~> 1.7.1", require: false
   gem "rubocop-rails", "~> 2.6.0", require: false

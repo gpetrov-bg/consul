@@ -197,33 +197,32 @@ describe "Proposal Notifications" do
       logout
       login_as user1
       visit root_path
-      visit root_path
 
-      find(".icon-notification").click
+      click_link "You have a new notification"
 
-      notification_for_user1 = Notification.find_by(user: user1)
       expect(page).to have_css ".notification", count: 1
-      expect(page).to have_content "There is one new notification on #{proposal.title}"
-      expect(page).to have_xpath "//a[@href='#{notification_path(notification_for_user1)}']"
+
+      click_link text: "There is one new notification on #{proposal.title}"
+
+      expect(page).to have_current_path(proposal_path(proposal))
 
       logout
       login_as user2
       visit root_path
-      visit root_path
 
-      find(".icon-notification").click
+      click_link "You have a new notification"
 
-      notification_for_user2 = Notification.find_by(user: user2)
       expect(page).to have_css ".notification", count: 1
-      expect(page).to have_content "There is one new notification on #{proposal.title}"
-      expect(page).to have_xpath "//a[@href='#{notification_path(notification_for_user2)}']"
+
+      click_link text: "There is one new notification on #{proposal.title}"
+
+      expect(page).to have_current_path(proposal_path(proposal))
 
       logout
       login_as user3
       visit root_path
-      visit root_path
 
-      find(".icon-no-notification").click
+      click_link "You don't have new notifications"
 
       expect(page).to have_css ".notification", count: 0
     end
@@ -252,29 +251,31 @@ describe "Proposal Notifications" do
       login_as user1.reload
       visit root_path
 
-      find(".icon-notification").click
+      click_link "You have a new notification"
 
-      notification_for_user1 = Notification.find_by(user: user1)
       expect(page).to have_css ".notification", count: 1
-      expect(page).to have_content "There is one new notification on #{proposal.title}"
-      expect(page).to have_xpath "//a[@href='#{notification_path(notification_for_user1)}']"
+
+      click_link text: "There is one new notification on #{proposal.title}"
+
+      expect(page).to have_current_path(proposal_path(proposal))
 
       logout
       login_as user2.reload
       visit root_path
 
-      find(".icon-notification").click
+      click_link "You have a new notification"
 
-      notification_for_user2 = Notification.find_by(user: user2)
       expect(page).to have_css ".notification", count: 1
-      expect(page).to have_content "There is one new notification on #{proposal.title}"
-      expect(page).to have_xpath "//a[@href='#{notification_path(notification_for_user2)}']"
+
+      click_link text: "There is one new notification on #{proposal.title}"
+
+      expect(page).to have_current_path(proposal_path(proposal))
 
       logout
       login_as user3.reload
       visit root_path
 
-      find(".icon-no-notification").click
+      click_link "You don't have new notifications"
 
       expect(page).to have_css ".notification", count: 0
     end
@@ -301,14 +302,11 @@ describe "Proposal Notifications" do
       logout
       login_as user
       visit root_path
-      visit root_path
 
-      find(".icon-notification").click
+      click_link "You have a new notification"
 
-      notification_for_user = Notification.find_by(user: user)
       expect(page).to have_css ".notification", count: 1
       expect(page).to have_content "This resource is not available anymore"
-      expect(page).not_to have_xpath "//a[@href='#{notification_path(notification_for_user)}']"
     end
 
     scenario "Proposal retired by author", :js do
@@ -348,8 +346,7 @@ describe "Proposal Notifications" do
         login_as user.reload
         visit root_path
 
-        within("#notifications") { expect(page).to have_content :all, "You have 3 new notifications" }
-        find(".icon-notification").click
+        click_link "You have 3 new notifications"
 
         expect(page).to have_css ".notification", count: 3
         expect(page).to have_content "There is one new notification on #{proposal.title}", count: 3

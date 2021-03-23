@@ -249,8 +249,8 @@ en:
         new_notifications:
           one: You have a new notification
           other: You have %{count} new notifications
+          zero: "You don't have new notifications"
         notifications: Notifications
-        no_notifications: "You don't have new notifications"
       sdg: "SDG"
   notifications:
     index:
@@ -697,6 +697,8 @@ en:
       goal: "By SDG"
       goal_blank: "Select a goal"
       search: "Filter"
+      target: "By target"
+      target_blank: "Select a target"
       title: "Advanced search"
       to: "To"
     author_info:
@@ -782,7 +784,6 @@ en:
     facebook: "%{org} Facebook"
     twitter: "%{org} Twitter"
     youtube: "%{org} YouTube"
-    whatsapp: WhatsApp
     telegram: "%{org} Telegram"
     instagram: "%{org} Instagram"
   stats:
@@ -971,3 +972,8 @@ en:
     create:
       enqueue_remote_translation: Translations have been correctly requested.
     button: Translate page
+  tags:
+    filter:
+      more:
+        one: "One more tag"
+        other: "%{count} more tags"

@@ -249,8 +249,8 @@ es:
         new_notifications:
           one: Tienes una nueva notificación
           other: Tienes %{count} notificaciones nuevas
+          zero: "No tienes notificaciones nuevas"
         notifications: Notificaciones
-        no_notifications: "No tienes notificaciones nuevas"
       sdg: "ODS"
   notifications:
     index:
@@ -697,6 +697,8 @@ es:
       goal: "Por ODS"
       goal_blank: "Elige un objetivo"
       search: "Filtrar"
+      target: "Por meta"
+      target_blank: "Elige una meta"
       title: "Búsqueda avanzada"
       to: "Hasta"
     author_info:
@@ -782,7 +784,6 @@ es:
     facebook: "Facebook de %{org}"
     twitter: "Twitter de %{org}"
     youtube: "YouTube de %{org}"
-    whatsapp: WhatsApp
     telegram: "Telegram de %{org}"
     instagram: "Instagram de %{org}"
   stats:
@@ -971,3 +972,8 @@ es:
     create:
       enqueue_remote_translation: Se han solicitado correctamente las traducciones.
     button: Traducir página
+  tags:
+    filter:
+      more:
+        one: "Una etiqueta más"
+        other: "%{count} etiquetas más"

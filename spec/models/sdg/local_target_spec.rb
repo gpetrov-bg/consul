@@ -18,7 +18,7 @@ describe SDG::LocalTarget do
   end
 
   it "is not valid without a code" do
-    expect(build(:sdg_local_target, code: nil, target: SDG::Target[1.1])).not_to be_valid
+    expect(build(:sdg_local_target, code: nil, target: SDG::Target[1.1], goal: SDG::Goal[1])).not_to be_valid
   end
 
   it "is not valid when code does not include associated target code" do
@@ -47,6 +47,15 @@ describe SDG::LocalTarget do
     expect(build(:sdg_local_target, target: nil)).not_to be_valid
   end
 
+  describe "#set_related_goal" do
+    it "before validation set related goal" do
+      local_target = build(:sdg_local_target, code: "1.1.1", target: SDG::Target["1.1"], goal: nil)
+
+      expect(local_target).to be_valid
+      expect(local_target.goal).to eq(SDG::Goal[1])
+    end
+  end
+
   describe "#goal" do
     it "returns the target goal" do
       local_target = create(:sdg_local_target, code: "1.1.1")
@@ -72,6 +81,34 @@ describe SDG::LocalTarget do
 
       expect(local_target).to be > lesser_local_target
       expect(local_target).to be < greater_local_target
+    end
+
+    it "can be compared against global targets" do
+      lesser_target = build(:sdg_target, code: "10.A", goal: SDG::Goal[10])
+      greater_target = build(:sdg_target, code: "11.1", goal: SDG::Goal[11])
+
+      expect(local_target).to be > lesser_target
+      expect(local_target).to be < greater_target
+    end
+
+    it "can be compared against goals" do
+      lesser_goal = build(:sdg_goal, code: "10")
+      greater_goal = build(:sdg_goal, code: "11")
+
+      expect(local_target).to be > lesser_goal
+      expect(local_target).to be < greater_goal
+    end
+  end
+
+  describe ".[]" do
+    it "finds existing local targets by code" do
+      create(:sdg_local_target, code: "1.1.1")
+
+      expect(SDG::LocalTarget["1.1.1"].code).to eq "1.1.1"
+    end
+
+    it "raises an exception for non-existing codes" do
+      expect { SDG::LocalTarget["1.1.99"] }.to raise_exception ActiveRecord::RecordNotFound
     end
   end
 end
