@@ -1,15 +1,12 @@
 require "rails_helper"
 
 describe "Proposals" do
-  before do
-    login_as_manager
-  end
+  let(:user) { create(:user, :level_two) }
 
   context "Create" do
     scenario "Creating proposals on behalf of someone" do
-      user = create(:user, :level_two)
       login_managed_user(user)
-
+      login_as_manager
       click_link "Create proposal"
 
       within(".account-info") do
@@ -21,7 +18,7 @@ describe "Proposals" do
 
       fill_in "Proposal title", with: "Help refugees"
       fill_in "Proposal summary", with: "In summary, what we want is..."
-      fill_in "Proposal text", with: "This is very important because..."
+      fill_in_ckeditor "Proposal text", with: "This is very important because..."
       fill_in "proposal_video_url", with: "https://www.youtube.com/watch?v=yRYFKcMa_Ek"
       check "proposal_terms_of_service"
 
@@ -40,12 +37,22 @@ describe "Proposals" do
     end
 
     scenario "Should not allow unverified users to create proposals" do
-      user = create(:user)
-      login_managed_user(user)
+      login_managed_user(create(:user))
 
+      login_as_manager
       click_link "Create proposal"
 
       expect(page).to have_content "User is not verified"
+    end
+
+    scenario "when user has not been selected we can't create a proposal" do
+      Setting["feature.user.skip_verification"] = "true"
+      login_as_manager
+
+      click_link "Create proposal"
+
+      expect(page).to have_content "To perform this action you must select a user"
+      expect(page).to have_current_path management_document_verifications_path
     end
   end
 
@@ -53,10 +60,9 @@ describe "Proposals" do
     scenario "When path matches the friendly url" do
       proposal = create(:proposal)
 
-      user = create(:user, :level_two)
-      login_managed_user(user)
-
       right_path = management_proposal_path(proposal)
+      login_managed_user(user)
+      login_as_manager
       visit right_path
 
       expect(page).to have_current_path(right_path)
@@ -65,21 +71,22 @@ describe "Proposals" do
     scenario "When path does not match the friendly url" do
       proposal = create(:proposal)
 
-      user = create(:user, :level_two)
-      login_managed_user(user)
-
       right_path = management_proposal_path(proposal)
       old_path = "#{management_proposals_path}/#{proposal.id}-something-else"
+
+      login_managed_user(user)
+      login_as_manager
       visit old_path
 
       expect(page).not_to have_current_path(old_path)
       expect(page).to have_current_path(right_path)
     end
 
-    scenario "Successful proposal", :js do
+    scenario "Successful proposal" do
       proposal = create(:proposal, :successful, title: "Success!")
 
-      login_managed_user(create(:user, :level_two))
+      login_managed_user(user)
+      login_as_manager
       visit management_proposal_path(proposal)
 
       expect(page).to have_content("Success!")
@@ -90,9 +97,8 @@ describe "Proposals" do
     proposal1 = create(:proposal, title: "Show me what you got")
     proposal2 = create(:proposal, title: "Get Schwifty")
 
-    user = create(:user, :level_two)
     login_managed_user(user)
-
+    login_as_manager
     click_link "Support proposals"
 
     fill_in "search", with: "what you got"
@@ -113,9 +119,8 @@ describe "Proposals" do
     proposal1 = create(:proposal, title: "Show me what you got")
     proposal2 = create(:proposal, title: "Get Schwifty")
 
-    user = create(:user, :level_two)
     login_managed_user(user)
-
+    login_as_manager
     click_link "Support proposals"
 
     expect(page).to have_current_path(management_proposals_path)
@@ -139,10 +144,9 @@ describe "Proposals" do
   context "Voting" do
     let!(:proposal) { create(:proposal) }
 
-    scenario "Voting proposals on behalf of someone in index view", :js do
-      user = create(:user, :level_two)
+    scenario "Voting proposals on behalf of someone in index view" do
       login_managed_user(user)
-
+      login_as_manager
       click_link "Support proposals"
 
       within(".proposals-list") do
@@ -154,10 +158,9 @@ describe "Proposals" do
       expect(page).to have_current_path(management_proposals_path)
     end
 
-    scenario "Voting proposals on behalf of someone in show view", :js do
-      user = create(:user, :level_two)
+    scenario "Voting proposals on behalf of someone in show view" do
       login_managed_user(user)
-
+      login_as_manager
       click_link "Support proposals"
 
       within(".proposals-list") { click_link proposal.title }
@@ -171,12 +174,22 @@ describe "Proposals" do
     end
 
     scenario "Should not allow unverified users to vote proposals" do
-      user = create(:user)
-      login_managed_user(user)
+      login_managed_user(create(:user))
 
+      login_as_manager
       click_link "Support proposals"
 
       expect(page).to have_content "User is not verified"
+    end
+
+    scenario "when user has not been selected we can't support proposals" do
+      Setting["feature.user.skip_verification"] = "true"
+      login_as_manager
+
+      click_link "Support proposals"
+
+      expect(page).to have_content "To perform this action you must select a user"
+      expect(page).to have_current_path management_document_verifications_path
     end
   end
 
@@ -184,13 +197,14 @@ describe "Proposals" do
     scenario "Printing proposals" do
       6.times { create(:proposal) }
 
+      login_as_manager
       click_link "Print proposals"
 
       expect(page).to have_css(".proposal", count: 5)
       expect(page).to have_css("a[href='javascript:window.print();']", text: "Print")
     end
 
-    scenario "Filtering proposals to be printed", :js do
+    scenario "Filtering proposals to be printed" do
       worst_proposal = create(:proposal, title: "Worst proposal")
       worst_proposal.update_column(:confidence_score, 2)
       best_proposal = create(:proposal, title: "Best proposal")
@@ -198,9 +212,7 @@ describe "Proposals" do
       medium_proposal = create(:proposal, title: "Medium proposal")
       medium_proposal.update_column(:confidence_score, 5)
 
-      user = create(:user, :level_two)
-      login_managed_user(user)
-
+      login_as_manager
       click_link "Print proposals"
 
       expect(page).to have_selector(".js-order-selector[data-order='confidence_score']")
@@ -214,13 +226,27 @@ describe "Proposals" do
 
       expect(page).to have_selector(".js-order-selector[data-order='created_at']")
 
-      expect(current_url).to include("order=created_at")
-      expect(current_url).to include("page=1")
+      expect(page).to have_current_path(/order=created_at/)
+      expect(page).to have_current_path(/page=1/)
 
       within(".proposals-list") do
         expect(medium_proposal.title).to appear_before(best_proposal.title)
         expect(best_proposal.title).to appear_before(worst_proposal.title)
       end
+    end
+
+    scenario "when user has not been selected we can't support a proposal" do
+      create(:proposal)
+      Setting["feature.user.skip_verification"] = "true"
+      login_as_manager
+
+      click_link "Print proposals"
+      within ".proposals-list" do
+        click_link "Support"
+      end
+
+      expect(page).to have_content "To perform this action you must select a user"
+      expect(page).to have_current_path management_document_verifications_path
     end
   end
 end

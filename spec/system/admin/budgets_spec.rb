@@ -1,35 +1,13 @@
 require "rails_helper"
 
 describe "Admin budgets", :admin do
-  context "Feature flag" do
-    before do
-      Setting["process.budgets"] = nil
-    end
-
-    scenario "Disabled with a feature flag" do
-      expect { visit admin_budgets_path }.to raise_exception(FeatureFlags::FeatureDisabled)
-    end
-  end
-
   context "Load" do
-    let!(:budget) { create(:budget, slug: "budget_slug") }
+    before { create(:budget, slug: "budget_slug") }
 
     scenario "finds budget by slug" do
       visit edit_admin_budget_path("budget_slug")
 
       expect(page).to have_content("Edit Participatory budget")
-    end
-
-    scenario "raises an error if budget slug is not found" do
-      expect do
-        visit edit_admin_budget_path("wrong_budget")
-      end.to raise_error ActiveRecord::RecordNotFound
-    end
-
-    scenario "raises an error if budget id is not found" do
-      expect do
-        visit edit_admin_budget_path(0)
-      end.to raise_error ActiveRecord::RecordNotFound
     end
   end
 
@@ -63,7 +41,7 @@ describe "Admin budgets", :admin do
       expect(page).to have_content(finished_budget.name)
 
       within "#budget_#{finished_budget.id}" do
-        expect(page).to have_content("Completed")
+        expect(page).to have_content("COMPLETED")
       end
 
       click_link "Finished"
@@ -116,7 +94,7 @@ describe "Admin budgets", :admin do
       expect(page).to have_select "Final voting style", selected: "Knapsack"
     end
 
-    scenario "Create budget - Approval voting", :js do
+    scenario "Create budget - Approval voting" do
       admin = Administrator.first
 
       visit admin_budgets_path
@@ -156,7 +134,7 @@ describe "Admin budgets", :admin do
       expect(page).to have_css("small.form-error", text: "has already been taken")
     end
 
-    scenario "Do not show results and stats settings on new budget", :js do
+    scenario "Do not show results and stats settings on new budget" do
       visit new_admin_budget_path
 
       expect(page).not_to have_content "Show results and stats"
@@ -166,7 +144,7 @@ describe "Admin budgets", :admin do
     end
   end
 
-  context "Create", :js do
+  context "Create" do
     scenario "A new budget is always created in draft mode" do
       visit admin_budgets_path
       click_link "Create new budget"
@@ -183,7 +161,7 @@ describe "Admin budgets", :admin do
     end
   end
 
-  context "Publish", :js do
+  context "Publish" do
     let(:budget) { create(:budget, :drafting) }
 
     scenario "Can preview budget before it is published" do
@@ -297,7 +275,7 @@ describe "Admin budgets", :admin do
       end
     end
 
-    scenario "Show results and stats settings", :js do
+    scenario "Show results and stats settings" do
       visit edit_admin_budget_path(budget)
 
       within_fieldset "Show results and stats" do
@@ -307,7 +285,7 @@ describe "Admin budgets", :admin do
       end
     end
 
-    scenario "Changing name for current locale will update the slug if budget is in draft phase", :js do
+    scenario "Changing name for current locale will update the slug if budget is in draft phase" do
       budget.update!(published: false)
       old_slug = budget.slug
 
@@ -343,7 +321,7 @@ describe "Admin budgets", :admin do
       expect(page).to have_current_path(admin_budgets_path)
     end
 
-    scenario "Deselect all selected staff", :js do
+    scenario "Deselect all selected staff" do
       admin = Administrator.first
       valuator = create(:valuator)
 
@@ -369,7 +347,7 @@ describe "Admin budgets", :admin do
   end
 
   context "Calculate Budget's Winner Investments" do
-    scenario "For a Budget in reviewing balloting", :js do
+    scenario "For a Budget in reviewing balloting" do
       budget = create(:budget, :reviewing_ballots)
       heading = create(:budget_heading, budget: budget, price: 4)
       unselected = create(:budget_investment, :unselected, heading: heading, price: 1,

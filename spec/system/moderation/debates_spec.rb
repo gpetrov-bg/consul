@@ -1,15 +1,7 @@
 require "rails_helper"
 
 describe "Moderate debates" do
-  scenario "Disabled with a feature flag" do
-    Setting["process.debates"] = nil
-    moderator = create(:moderator)
-    login_as(moderator.user)
-
-    expect { visit moderation_debates_path }.to raise_exception(FeatureFlags::FeatureDisabled)
-  end
-
-  scenario "Hide", :js do
+  scenario "Hide" do
     citizen = create(:user)
     moderator = create(:moderator)
 
@@ -67,21 +59,24 @@ describe "Moderate debates" do
         end
 
         scenario "Hide the debate" do
-          click_on "Hide debates"
+          accept_confirm { click_button "Hide debates" }
+
           expect(page).not_to have_css("debate_#{debate.id}")
           expect(debate.reload).to be_hidden
           expect(debate.author).not_to be_hidden
         end
 
         scenario "Block the author" do
-          click_on "Block authors"
+          accept_confirm { click_button "Block authors" }
+
           expect(page).not_to have_css("debate_#{debate.id}")
           expect(debate.reload).to be_hidden
           expect(debate.author).to be_hidden
         end
 
         scenario "Ignore the debate" do
-          click_on "Mark as viewed"
+          accept_confirm { click_button "Mark as viewed" }
+
           expect(page).not_to have_css("debate_#{debate.id}")
           expect(debate.reload).to be_ignored_flag
           expect(debate.reload).not_to be_hidden
@@ -89,7 +84,7 @@ describe "Moderate debates" do
         end
       end
 
-      scenario "select all/none", :js do
+      scenario "select all/none" do
         create_list(:debate, 2)
 
         visit moderation_debates_path
@@ -111,13 +106,13 @@ describe "Moderate debates" do
 
         visit moderation_debates_path(filter: "all", page: "2", order: "created_at")
 
-        click_on "Mark as viewed"
+        accept_confirm { click_button "Mark as viewed" }
 
         expect(page).to have_selector(".js-order-selector[data-order='created_at']")
 
-        expect(current_url).to include("filter=all")
-        expect(current_url).to include("page=2")
-        expect(current_url).to include("order=created_at")
+        expect(page).to have_current_path(/filter=all/)
+        expect(page).to have_current_path(/page=2/)
+        expect(page).to have_current_path(/order=created_at/)
       end
     end
 
